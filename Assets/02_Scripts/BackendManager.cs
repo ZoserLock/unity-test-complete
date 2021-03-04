@@ -5,6 +5,7 @@ using System.IO;
 using UnityEngine;
 using UnityEngine.Networking;
 
+// Class that hold a result of a backend requests.
 public class BackendRequestResult
 {
     public bool Success = false;
@@ -13,12 +14,14 @@ public class BackendRequestResult
     public string ErrorString    = "";
 }
 
+// Class that handle all related to web services or file download.
 public class BackendManager : MonoBehaviour
 {
     private const string _modelURL      = "https://unity-exercise.dt.timlabtesting.com/data/mesh-obj";
     private const string _shovelsURL    = "https://unity-exercise.dt.timlabtesting.com/data/shovels";
     private const string _shovelInfoURL = "https://unity-exercise.dt.timlabtesting.com/data/report";
 
+    // Get the information about the mesh.
     public void GetModelInfo(System.Action<BackendRequestResult, GetModelResponse> resultFunction)
     {
         StartCoroutine(GetRequest(_modelURL,(BackendRequestResult result)=>
@@ -37,6 +40,7 @@ public class BackendManager : MonoBehaviour
         }));
     }
 
+    // Get the information about the shovel.
     public void GetShovels(System.Action<BackendRequestResult, GetShovelsResponse> resultFunction)
     {
         StartCoroutine(GetRequest(_shovelsURL, (BackendRequestResult result) =>
@@ -55,6 +59,7 @@ public class BackendManager : MonoBehaviour
         }));
     }
 
+    // Get information about the state of the shovels.
     public void GetShovelInfo(System.Action<BackendRequestResult, GetShovelInfoResponse> resultFunction)
     {
         StartCoroutine(GetRequest(_shovelInfoURL, (BackendRequestResult result) =>
@@ -73,6 +78,7 @@ public class BackendManager : MonoBehaviour
         }));
     }
 
+    // Download a file directly to the folder streaming assets.
     public void DownloadFile(string uri, System.Action<BackendRequestResult,string> resultCallback = null)
     {
         var lastSlash = uri.LastIndexOf('/');
@@ -120,6 +126,7 @@ public class BackendManager : MonoBehaviour
         }));
     }
 
+    // Base function to made a request.
     private IEnumerator GetRequest(string uri, System.Action<BackendRequestResult> responseCallback)
     {
         BackendRequestResult result = new BackendRequestResult();
@@ -155,6 +162,4 @@ public class BackendManager : MonoBehaviour
             }
         }
     }
-
-
 }

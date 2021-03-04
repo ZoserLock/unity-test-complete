@@ -4,7 +4,6 @@ using UnityEngine;
 using UnityEngine.EventSystems;
 
 // Class that controls the movement of the camera in the application
-// TODO: Check Limits
 public class CameraController : MonoBehaviour
 {
     public enum CameraDragState
@@ -71,6 +70,7 @@ public class CameraController : MonoBehaviour
     {
         if (Input.GetMouseButton(1))
         {
+            // If the mouse is pointing to UI do nothing.
             if (!EventSystem.current.IsPointerOverGameObject())
             {
                 if (_dragState == CameraDragState.Idle)
@@ -93,6 +93,7 @@ public class CameraController : MonoBehaviour
 
         if (Input.GetMouseButton(2))
         {
+            // If the mouse is pointing to UI do nothing.
             if (!EventSystem.current.IsPointerOverGameObject())
             {
                 if (_dragState == CameraDragState.Idle)
@@ -199,13 +200,16 @@ public class CameraController : MonoBehaviour
             _dragAction = CameraDragAction.None;
         }
 
-        // Down allow the camera go too far away
+        // Dont allow the camera go too far away
+        // This will create a sphere with center on [0,0,0] of size 80. If the camera move
+        // far from that clamp that value
         if(_camera.transform.position.magnitude>80)
         {
             _camera.transform.position = Vector3.ClampMagnitude(_camera.transform.position, 80);
         }
     }
 
+    // Get a point in the far plane of the camera using the input ray.
     public Vector3 ProjectRayToCameraFarPlane(Ray pickRay)
     {
         Plane farPlane = new Plane(-_camera.transform.forward, _camera.farClipPlane);
@@ -220,6 +224,7 @@ public class CameraController : MonoBehaviour
         return Vector3.zero;
     }
 
+    // Get a point on the ground using the input ray.
     public Vector3 ProjectRayToGround(Ray pickRay)
     {
         RaycastHit hit;
@@ -232,6 +237,9 @@ public class CameraController : MonoBehaviour
         return Vector3.zero;
     }
 
+    // Try to select a shovel at mouse postions.
+    // If will return true and the shovel as a parameter is a shovel is found
+    // it will return false otherwise
     public bool TrySelectShovelAtMousePosition(out ShovelVisual shovelVisual)
     {
         Ray pickRay = _camera.ScreenPointToRay(Input.mousePosition);

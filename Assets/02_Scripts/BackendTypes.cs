@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+// Set of classes that will hold the data that comes from the web services.
 [Serializable]
 public class GetRequestResponse
 {
@@ -35,7 +36,7 @@ public class ShovelData
     public string Name;
     public Vector3 Position;
 
-    // Data filled later.
+    // Derived Data filled later.
     public Report Report = null;
 }
 

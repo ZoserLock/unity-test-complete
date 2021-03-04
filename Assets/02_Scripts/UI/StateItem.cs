@@ -4,9 +4,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
-
-
-
+// Class that represent a state item in a shovel report.
 public class StateItem : MonoBehaviour
 {
     [SerializeField]
@@ -21,6 +19,7 @@ public class StateItem : MonoBehaviour
         _mainImage.color = HexToColor(state.Color);
     }
 
+    // Function to parse hex color to unity color.
     public static Color HexToColor(string hex)
     {
         try

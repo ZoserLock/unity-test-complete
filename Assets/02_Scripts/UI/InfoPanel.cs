@@ -22,6 +22,7 @@ public class InfoPanel : MonoBehaviour
 
     private List<StateItem> _stateItems = new List<StateItem>();
 
+    // This is the function that fill a shovel report
     public void SetShovelData(ShovelData shovelData)
     {
         // Clear previously created state items
@@ -49,6 +50,7 @@ public class InfoPanel : MonoBehaviour
         }
     }
 
+    // Function to add a new state item into the state scrollview.
     private void AddStateItem(ShovelState state)
     {
         var stateItem = Instantiate<StateItem>(_stateItemPrefab);

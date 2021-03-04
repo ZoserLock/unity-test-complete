@@ -5,6 +5,7 @@ using UnityEngine;
 using Dummiesman;
 using UnityEngine.EventSystems;
 
+// Class to hold a state of multiple calls. 
 public class FutureResult
 {
     public bool Completed = false;
@@ -13,6 +14,7 @@ public class FutureResult
     public List<string> FailureReasons = new List<string>();
 }
 
+// Main class of the application.
 public class SceneManager : MonoBehaviour
 {
     [SerializeField]
@@ -57,8 +59,10 @@ public class SceneManager : MonoBehaviour
     // Shovel Visual Representation objects.
     private List<ShovelVisual> _shovelVisuals = new List<ShovelVisual>();
 
+    // Current selected shovel. if none is selected this variable is null.
     private ShovelVisual _selectedShovel = null;
 
+    // The local path of the download meshes and textures.
     private string _mapModelMeshPath    = "";
     private string _mapModelMtlPath     = "";
     private string _mapModelTexturePath = "";
@@ -85,11 +89,14 @@ public class SceneManager : MonoBehaviour
             {
                 if (_dataRetrievingFuture.Success)
                 {
+                    // If the application finished all the web request tasks start the application.
                     BeginApplication();
                 }
                 else
                 {
                     _uiManager.ShowLoadingPanel(false);
+
+                    // In case that something went wrong in the initialization show all the errors in the logs and stop the application.
 
                     Debug.LogError("Initialization Failed!");
                     Debug.LogError("Failure Actions:");
@@ -109,11 +116,13 @@ public class SceneManager : MonoBehaviour
         }
         else
         {
-            // Select a shovel
+            // Try to select a shovel when mouse button is donw.
             if(Input.GetMouseButtonDown(0))
             {
+                // Do not consider click in UI
                 if (!EventSystem.current.IsPointerOverGameObject())
                 {
+                    // Select a shovel and unselect the last selected shovel.
                     if (_cameraController.TrySelectShovelAtMousePosition(out ShovelVisual shovel))
                     {
                         if (_selectedShovel != null)
@@ -141,11 +150,12 @@ public class SceneManager : MonoBehaviour
         }
     }
 
+    // Class that will start the process of getting all the data from the web services.
     FutureResult BeginDataRetrieving()
     {
         var futureResult = new FutureResult();
 
-        // GetModel Data and download files.
+        // GetModel Data and then download the files.
         _backendManager.GetModelInfo((BackendRequestResult result, GetModelResponse response) =>
         {
             if (result.Success)
@@ -164,6 +174,7 @@ public class SceneManager : MonoBehaviour
             }
         });
 
+        // Get the shovel data
         _backendManager.GetShovels((BackendRequestResult result, GetShovelsResponse response) =>
         {
             if (result.Success)
@@ -183,7 +194,7 @@ public class SceneManager : MonoBehaviour
             }
         });
 
-
+        // Get the shovel report data
         _backendManager.GetShovelInfo( (BackendRequestResult result, GetShovelInfoResponse response) =>
         {
             if (result.Success)
@@ -266,6 +277,9 @@ public class SceneManager : MonoBehaviour
         });
     }
 
+    // Function that check if all the task are completed.
+    // In this case there are always 6 tasks so the system waits that.
+    // In case of an error the futureResult will be completed and this coroutine will stop.
     IEnumerator CheckDataRetrieveStatus(FutureResult futureResult)
     {
         while(!futureResult.Completed)
@@ -286,8 +300,6 @@ public class SceneManager : MonoBehaviour
         EnableCameraControls(true);
 
         _uiManager.ShowLoadingPanel(false);
-
-        // Show welcome panel.
 
         PrepareDerivatedData();
 
@@ -317,30 +329,36 @@ public class SceneManager : MonoBehaviour
         }
     }
 
-    // Load and generate the map mode
-    // TODO: Change uri names!!!
+    // Load and generate the map model
     void LoadMapModel()
     {
+        // Parse de obj model object.
         var mapMeshGameObject = new OBJLoader().Load(_mapModelMeshPath, _mapModelMtlPath);
 
         var meshRenderer = mapMeshGameObject.GetComponentInChildren<MeshRenderer>();
         var meshFilter = mapMeshGameObject.GetComponentInChildren<MeshFilter>();
         var meshGameObject = meshRenderer.gameObject;
 
+        // Extract the texture of the parsed mesh
         var texture = meshRenderer.material.GetTexture("_MainTex");
 
+        // Change the material and set the texture.
         meshRenderer.material = _mapBaseMaterial;
         meshRenderer.sharedMaterial.SetTexture("_BaseMap", texture);
 
+        // Attach the mesh to a know transform.
         mapMeshGameObject.transform.SetParent(_mapRoot.transform);
 
+        // Generate a mesh collider using the same mesh.
         var meshCollider = meshGameObject.AddComponent<MeshCollider>();
         meshCollider.sharedMesh = meshFilter.sharedMesh;
 
+        // Generate the border of this mesh.
         _mapBorderGenerator.GenerateBorderMesh(meshFilter.sharedMesh);
     }
 
     // Load all the objects that represent a shovel in the model.
+    // This also loads the UI icons.
     void LoadShovelVisuals()
     {
         foreach (var shovel in _shovels)

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
+// Class that represent a floating icon of a shovel.
 public class ShovelIcon : MonoBehaviour
 {
     [SerializeField]
