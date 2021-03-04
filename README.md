@@ -3,7 +3,7 @@
 This application show a map with a couple of nodes obtained from a webservice.
 
 #### Screenshot
-![Example](https://github.com/ZoserLock/unity-test-complete/blob/master/Images/image.png?raw=true)
+![Example](https://github.com/ZoserLock/unity-test-complete/raw/main/Images/image.png)
 
 # How to use in Unity
 
