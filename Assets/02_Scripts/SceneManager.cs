@@ -218,6 +218,15 @@ public class SceneManager : MonoBehaviour
                 _mapModelMeshPath = filePath;
                 futureResult.CompletedActions.Add("GetMesh");
             }
+            else
+            {
+                if (!futureResult.Completed)
+                {
+                    futureResult.Completed = true;
+                    futureResult.Success = false;
+                    futureResult.FailureReasons.Add("Failed to Download Mesh File: " + result.ErrorString);
+                }
+            }
         });
 
         _backendManager.DownloadFile(mtlUri, (BackendRequestResult result, string filePath) =>
@@ -227,6 +236,15 @@ public class SceneManager : MonoBehaviour
                 _mapModelMtlPath = filePath;
                 futureResult.CompletedActions.Add("GetMtl");
             }
+            else
+            {
+                if (!futureResult.Completed)
+                {
+                    futureResult.Completed = true;
+                    futureResult.Success = false;
+                    futureResult.FailureReasons.Add("Failed to Download Mtl File: " + result.ErrorString);
+                }
+            }
         });
 
         _backendManager.DownloadFile(textureUri, (BackendRequestResult result, string filePath) =>
@@ -235,6 +253,15 @@ public class SceneManager : MonoBehaviour
             {
                 _mapModelTexturePath = filePath;
                 futureResult.CompletedActions.Add("GetTexture");
+            }
+            else
+            {
+                if (!futureResult.Completed)
+                {
+                    futureResult.Completed = true;
+                    futureResult.Success = false;
+                    futureResult.FailureReasons.Add("Failed to Download Texture File: "+result.ErrorString);
+                }
             }
         });
     }

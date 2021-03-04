@@ -75,14 +75,18 @@ public class BackendManager : MonoBehaviour
 
     public void DownloadFile(string uri, System.Action<BackendRequestResult,string> resultCallback = null)
     {
-        //Path.GetFileNameWithoutExtension(_objInfo.Name)
-
         var lastSlash = uri.LastIndexOf('/');
     
         if(lastSlash==-1)
         {
-            Debug.LogError("Unable To Download File");
-            return;
+            BackendRequestResult result = new BackendRequestResult();
+            result.ErrorString = "Invalid input uri string";
+            result.Success = false;
+
+            if (resultCallback != null)
+            {
+                resultCallback(result, "");
+            }
         }
 
         string filePath = Application.streamingAssetsPath + uri.Substring(lastSlash);
@@ -93,6 +97,10 @@ public class BackendManager : MonoBehaviour
             {
                 try
                 {
+                    // Ensure Download Folder Path exists
+                    Directory.CreateDirectory(Application.streamingAssetsPath);
+
+                    // Write file to disk
                     using (var fs = new FileStream(filePath, FileMode.Create, FileAccess.Write))
                     {
                         fs.Write(result.ResponseBytes, 0, result.ResponseBytes.Length);
